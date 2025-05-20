@@ -1,0 +1,47 @@
+import { StyleSheet, TouchableOpacity, View, Text } from "react-native";
+
+export default function ButtonPadrao(props) {
+
+    return (
+        <TouchableOpacity style={estilo.base_botao} onPress={props.handlePress}>
+            <View style={[estilo.view_botao, estilo.botao_escuro]}>                
+                <Text style={[estilo.botao, estilo.texto_botaoEscuro]}>{props.textoBotao}</Text>
+            </View>
+        </TouchableOpacity>
+    )
+}
+
+const estilo = StyleSheet.create({
+    base_botao: {
+        width: "80%",
+        height: "10%"
+    },
+    view_botao: {
+        width: "100%",
+        height: "100%",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        borderRadius: 10
+    },
+    botao: {        
+        fontFamily: "Poppins",
+        fontSize: 20,
+        fontWeight: "bold",
+        borderRadius: 10
+    },
+    botao_escuro: {
+        backgroundColor: "#4361EE",
+        borderRadius: 10       
+    },
+    botao_claro: {
+        backgroundColor: "#FDFDFD",
+        borderRadius: 10
+    },
+    texto_botaoClaro: {
+        color: "#021526",        
+    },
+    texto_botaoEscuro: {        
+        color: "#FDFDFD",
+    }
+});

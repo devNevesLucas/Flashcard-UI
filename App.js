@@ -12,7 +12,7 @@ export default function App() {
 
   return (
     
-      <NavigationContainer>
+      <NavigationContainer style={{backgroundColor: "#4361EE"}}>
         {userLogado? <MainNavigator /> : <AuthNavigator /> }
       </NavigationContainer>
     
