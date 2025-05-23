@@ -2,10 +2,13 @@ import { StyleSheet, TouchableOpacity, View, Text } from "react-native";
 
 export default function ButtonPadrao(props) {
 
+    const estiloBotao = props.ModoEscuro ? estilo.botao_escuro : estilo.botao_claro;
+    const estiloTexto = props.ModoEscuro ? estilo.texto_botaoEscuro : estilo.texto_botaoClaro;
+
     return (
         <TouchableOpacity style={estilo.base_botao} onPress={props.handlePress}>
-            <View style={[estilo.view_botao, estilo.botao_escuro]}>                
-                <Text style={[estilo.botao, estilo.texto_botaoEscuro]}>{props.textoBotao}</Text>
+            <View style={[estilo.view_botao, estiloBotao ]}>                
+                <Text style={[estilo.botao, estiloTexto ]}>{props.textoBotao}</Text>
             </View>
         </TouchableOpacity>
     )
@@ -40,8 +43,10 @@ const estilo = StyleSheet.create({
     },
     texto_botaoClaro: {
         color: "#021526",        
+        fontWeight: "bold",
     },
     texto_botaoEscuro: {        
         color: "#FDFDFD",
+        fontWeight: "bold"
     }
 });

@@ -1,16 +1,27 @@
-import { ImageBackground, TextInput, Text, View, Button, StyleSheet, Pressable } from "react-native";
+import { ImageBackground, TextInput, Text, View, Button, StyleSheet, Pressable, Image } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useState } from "react";
 import InputField from "../components/InputField";
 import ButtonPadrao from "../components/ButtonPadrao";
+import { useUser } from "../context/user/useUser";
 
 export default function LoginPage({navigation}) {
 
     const [email, setEmail] = useState('');
     const [senha, setSenha] = useState('');
 
+    const {user, setUser } = useUser();
+
     const verificarLogin = () => {
-        navigation.navigate('MainNav');
+
+        const usuario = {
+            nome: 'neves',
+            email: 'neves@email.com',
+            nivel: 1,
+            pontuacao: 0
+        }
+
+        setUser(usuario)
     }
 
     const navegarTelaSignIn = () => {
@@ -45,7 +56,7 @@ export default function LoginPage({navigation}) {
                 <ButtonPadrao 
                     textoBotao="Entrar"    
                     handlePress={verificarLogin}                  
-                />
+                />          
             </ImageBackground>
         </SafeAreaView>
     );
