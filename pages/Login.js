@@ -1,13 +1,20 @@
-import { ImageBackground, TextInput, Text, View, Button, StyleSheet } from "react-native";
+import { ImageBackground, TextInput, Text, View, Button, StyleSheet, Pressable } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useState } from "react";
 import InputField from "../components/InputField";
 import ButtonPadrao from "../components/ButtonPadrao";
 
-
 export default function LoginPage({navigation}) {
 
+    const [email, setEmail] = useState('');
+    const [senha, setSenha] = useState('');
+
     const verificarLogin = () => {
-        navigation.navigate('Signin')
+        navigation.navigate('MainNav');
+    }
+
+    const navegarTelaSignIn = () => {
+        navigation.navigate('Signin');
     }
 
     return (
@@ -17,16 +24,21 @@ export default function LoginPage({navigation}) {
                 style={{width:'100%', height: '100%', justifyContent: 'space-evenly', alignItems: 'center'}}     
                 blurRadius={2}
                 resizeMode="cover"  
-            >                
-                <Text style={estilo.texto_bemVindo}>Bem Vindo!</Text>
+            >
 
                 <View style={estilo.container_principal}>
-                    <InputField Texto="Digite o seu email"/>
-                    <InputField Texto="Digite sua senha" Senha={true}/>
+                    <Text style={estilo.texto_bemVindo}>Bem Vindo!</Text>
 
+                    <View style={{width: "100%"}}>                    
+                        <InputField Texto="Digite o seu email" SetItem={setEmail} />
+                        <InputField Texto="Digite sua senha" Senha={true} SetItem={setSenha} />
+                    </View>
+                
                     <View style={{flexDirection: "row", gap: "2%"}}>
-                        <Text>Já possui uma conta?</Text>
-                        <Text>Clique aqui!</Text>
+                        <Text style={{color: "#FDFDFD"}}>Não possui conta?</Text>
+                        <Pressable onPress={navegarTelaSignIn}>
+                            <Text style={{color: "#4361EE"}}>Clique aqui!</Text>
+                        </Pressable>
                     </View>
                 </View>
 
@@ -47,8 +59,9 @@ const estilo = StyleSheet.create({
         color: "#FDFDFD"
     },
     container_principal: {
-        width: "80%", 
-        justifyContent: 'center', 
+        width: "85%", 
+        height: "60%",
+        justifyContent: 'space-around', 
         alignItems: 'center', 
         backgroundColor: "#172430",
         borderRadius: 10,
@@ -56,7 +69,5 @@ const estilo = StyleSheet.create({
         paddingBottom: "5%",
         paddingRight: "10%",
         paddingLeft: "10%"
-
     }
-
 });

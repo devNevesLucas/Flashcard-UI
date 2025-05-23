@@ -14,8 +14,8 @@ const estiloInput = StyleSheet.create({
         display: "flex",
         width: "100%",
         flexDirection: "column",
-        marginTop: 20,
-        marginBottom: 20
+        marginTop: 10,
+        marginBottom: 5
     },
     texto: {
         fontSize: 16,
