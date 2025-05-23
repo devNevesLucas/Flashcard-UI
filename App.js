@@ -5,22 +5,28 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import AuthNavigator from './navigator/AuthNav';
 import MainNavigator from './navigator/MainNav';
 import { useState } from 'react';
+import RootContainer from './RootContainer';
+import { UserProvider } from './context/user/UserProvider';
 
 export default function App() {
 
-  const [userLogado, setUserLogado] = useState(false);
-
   return (
-    
-      <NavigationContainer style={{backgroundColor: "#4361EE"}}>
-        {userLogado? <MainNavigator /> : <AuthNavigator /> }
-      </NavigationContainer>
-    
+    <UserProvider>
+      <RootContainer />
+    </UserProvider>
   );
+
 }
 
 
 /*
+const [userLogado, setUserLogado] = useState(false);
+
+<NavigationContainer style={{backgroundColor: "#4361EE"}}>
+  {userLogado? <MainNavigator /> : <AuthNavigator /> }
+</NavigationContainer>
+
+
 <SafeAreaProvider style={styles.container}>
 </SafeAreaProvider>
 */
