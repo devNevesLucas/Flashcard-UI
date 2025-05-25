@@ -10,18 +10,34 @@ export default function LoginPage({navigation}) {
     const [email, setEmail] = useState('');
     const [senha, setSenha] = useState('');
 
-    const {user, setUser } = useUser();
+    const { user, setUser } = useUser();
 
-    const verificarLogin = () => {
+    const verificarLogin = async () => {
 
-        const usuario = {
-            nome: 'neves',
-            email: 'neves@email.com',
-            nivel: 1,
-            pontuacao: 0
+        if (!email.includes('@')) return;
+
+        if (senha.length < 8) return;
+
+        try {
+            const url = `${process.env.EXPO_PUBLIC_BACKEND}/user/verificarLogin`;
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: { 'Content-type': 'application/json' },
+                body: JSON.stringify({
+                    email: email,
+                    senha: senha
+                }),
+            });
+
+            
+            const dados = await response.json();
+            
+            setUser(dados[0]);
+        
+        } catch (error) {
+            console.log("Erro ao obter usuário: ", error);
         }
 
-        setUser(usuario)
     }
 
     const navegarTelaSignIn = () => {

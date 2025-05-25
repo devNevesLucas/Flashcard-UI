@@ -4,10 +4,11 @@ export default function ButtonPadrao(props) {
 
     const estiloBotao = props.ModoEscuro ? estilo.botao_escuro : estilo.botao_claro;
     const estiloTexto = props.ModoEscuro ? estilo.texto_botaoEscuro : estilo.texto_botaoClaro;
+    const altura = props.Altura ? props.Altura : "10%";
 
     return (
-        <TouchableOpacity style={estilo.base_botao} onPress={props.handlePress}>
-            <View style={[estilo.view_botao, estiloBotao ]}>                
+        <TouchableOpacity style={[estilo.base_botao, {height: altura}]} onPress={props.handlePress}>
+            <View style={[estilo.view_botao, estiloBotao, ]}>       
                 <Text style={[estilo.botao, estiloTexto ]}>{props.textoBotao}</Text>
             </View>
         </TouchableOpacity>
@@ -16,8 +17,7 @@ export default function ButtonPadrao(props) {
 
 const estilo = StyleSheet.create({
     base_botao: {
-        width: "80%",
-        height: "10%"
+        width: "80%"
     },
     view_botao: {
         width: "100%",
