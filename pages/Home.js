@@ -4,10 +4,16 @@ import ButtonPadrao from "../components/ButtonPadrao";
 import { useUser } from "../context/user/useUser";
 import PerfilContainer from "../components/PerfilContainer";
 import ContagemDias from "../components/ContagemDias";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function HomePage() {
 
     const { user, setUser } = useUser();
+
+    const logout = async () => {
+        await AsyncStorage.removeItem('user');
+        setUser(null);
+    }
 
     return (
         <SafeAreaView style={{backgroundColor: "#5F79F0", flex: 1, width: '100%', height: '100%', alignItems: 'center', justifyContent: 'center'}}>
@@ -17,25 +23,25 @@ export default function HomePage() {
                 blurRadius={2}
                 resizeMode="cover"
             >
-                <PerfilContainer User={user}/>
+                <PerfilContainer User={user} />
 
-                <View style={{width: '100%', flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'space-around'}}>
-                    <ContagemDias />
+                <View style={{width: '100%', flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'space-evenly'}}>
+                    <ContagemDias User={user} />
 
-                    <View style={{width: "100%", alignItems: 'center', gap: 10}}>
+                    <View style={{width: "100%", height: "25%", alignItems: 'center', gap: 10}}>
                         <ButtonPadrao
                             textoBotao="Estudar sozinho"
                             ModoEscuro={true}                            
-                            Altura="22%"
+                            Altura="45%"
                         />
                         <ButtonPadrao 
                             textoBotao="Estudar em grupo"
                             ModoEscuro={true}
-                            Altura="22%"
+                            Altura="45%"
                         />
                     </View>
 
-                    <Pressable onPress={() => setUser(null)}>
+                    <Pressable onPress={logout} >
                         <Text style={{color: '#000000'}}>Sair</Text>
                     </Pressable>
                 </View>

@@ -4,6 +4,7 @@ import { useState } from "react";
 import InputField from "../components/InputField";
 import ButtonPadrao from "../components/ButtonPadrao";
 import { useUser } from "../context/user/useUser";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function LoginPage({navigation}) {
 
@@ -11,6 +12,20 @@ export default function LoginPage({navigation}) {
     const [senha, setSenha] = useState('');
 
     const { user, setUser } = useUser();
+
+    const carregarUsuario = async () => {
+
+        try {
+            const usuarioStr = await AsyncStorage.getItem('user');
+
+            if (usuarioStr) {
+                const userJson = JSON.parse(usuarioStr);
+                setUser(userJson);                
+            }
+        } catch (error) {
+            console.log("Erro: ", error);
+        }
+    }
 
     const verificarLogin = async () => {
 
@@ -29,20 +44,24 @@ export default function LoginPage({navigation}) {
                 }),
             });
 
-            
             const dados = await response.json();
-            
+
+            await AsyncStorage.removeItem('user');
+
+            await AsyncStorage.setItem('user', JSON.stringify(dados[0]));
+
             setUser(dados[0]);
         
         } catch (error) {
             console.log("Erro ao obter usuário: ", error);
         }
-
     }
 
     const navegarTelaSignIn = () => {
         navigation.navigate('Signin');
     }
+
+    carregarUsuario();
 
     return (
         <SafeAreaView style={{backgroundColor: "#4361EE", flex: 1, width: '100%', height: '100%', alignItems: 'center', justifyContent: 'center'}}>
