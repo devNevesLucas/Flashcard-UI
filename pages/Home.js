@@ -6,13 +6,17 @@ import PerfilContainer from "../components/PerfilContainer";
 import ContagemDias from "../components/ContagemDias";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-export default function HomePage() {
+export default function HomePage({navigation}) {
 
     const { user, setUser } = useUser();
 
     const logout = async () => {
         await AsyncStorage.removeItem('user');
         setUser(null);
+    }
+
+    const entrarSinglePlayer = () => {
+        navigation.navigate('Singleplayer');
     }
 
     return (
@@ -33,6 +37,7 @@ export default function HomePage() {
                             textoBotao="Estudar sozinho"
                             ModoEscuro={true}                            
                             Altura="45%"
+                            handlePress={entrarSinglePlayer}
                         />
                         <ButtonPadrao 
                             textoBotao="Estudar em grupo"
