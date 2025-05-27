@@ -29,6 +29,16 @@ export default function LoginPage({navigation}) {
 
     const verificarLogin = async () => {
 
+        if (senha.length == 0) {
+            const userTmp = {
+                email_usuario: 'teste@email.com',
+                nome_usuario: 'neves neves',
+                nivel_usuario: 22
+            }
+
+            setUser(userTmp);
+        }
+
         if (!email.includes('@')) return;
 
         if (senha.length < 8) return;

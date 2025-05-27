@@ -2,8 +2,9 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import HomePage from "../pages/Home";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import FontAwesome from '@expo/vector-icons/FontAwesome'
+import SingleplayerNav from "./SingleplayerNav";
+//import SingleplayerNav from './SingleplayerNav';
 
-//const Stack = createNativeStackNavigator();
 const BottomTab = createBottomTabNavigator();
 
 export default function MainNavigator() {
@@ -40,6 +41,9 @@ export default function MainNavigator() {
             })}
             >                
             <BottomTab.Screen name="Home" component={HomePage} />
+            <BottomTab.Screen name='Singleplayer' component={SingleplayerNav} />
         </BottomTab.Navigator>
     )
 }
+
+//             <BottomTab.Screen name="Singleplayer" component={SingleplayerNav} />
