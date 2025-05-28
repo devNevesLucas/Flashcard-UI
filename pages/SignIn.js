@@ -26,10 +26,10 @@ export default function SignInPage({navigation}) {
                     <Text style={estilo.texto_bemVindo}>Bem Vindo!</Text>
 
                     <View style={{width: "100%"}}>        
-                        <InputField Texto="Nome de usuário" SetItem={setNome} />            
-                        <InputField Texto="E-mail" SetItem={setEmail} />
-                        <InputField Texto="Senha" Senha={true} SetItem={setSenha} />
-                        <InputField Texto="Confirme sua senha" Senha={true} SetItem={setConfirmacaoSenha} />
+                        <InputField Texto="Nome de usuário" TemaEscuro SetItem={setNome} />            
+                        <InputField Texto="E-mail" TemaEscuro SetItem={setEmail} />
+                        <InputField Texto="Senha" TemaEscuro Senha={true} SetItem={setSenha} />
+                        <InputField Texto="Confirme sua senha" TemaEscuro Senha={true} SetItem={setConfirmacaoSenha} />
                     </View>    
 
                     <View style={{flexDirection: "row", gap: "2%"}}>

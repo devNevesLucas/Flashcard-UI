@@ -86,8 +86,8 @@ export default function LoginPage({navigation}) {
                     <Text style={estilo.texto_bemVindo}>Bem Vindo!</Text>
 
                     <View style={{width: "100%"}}>                    
-                        <InputField Texto="Digite o seu email" SetItem={setEmail} />
-                        <InputField Texto="Digite sua senha" Senha={true} SetItem={setSenha} />
+                        <InputField Texto="Digite o seu email" TemaEscuro SetItem={setEmail} />
+                        <InputField Texto="Digite sua senha" TemaEscuro Senha={true} SetItem={setSenha} />
                     </View>
                 
                     <View style={{flexDirection: "row", gap: "2%"}}>
