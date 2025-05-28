@@ -22,7 +22,7 @@ export default function DeckPage(props) {
 
     let quantidades = [
         { posicao: 0, valor: 1 },
-        { posicao: 1, valor: 5 }, 
+        { posicao: 1, valor: 10 }, 
         { posicao: 2, valor: deckTmp.meta_deck }, 
         { posicao: 3, valor: deckTmp.qtd_deck }
     ]
@@ -48,12 +48,11 @@ export default function DeckPage(props) {
         }
 
         return (
-            <Pressable onPress={setQtdCartas(item.valor)} style={[estilosBordas, {backgroundColor: corBackground}, {paddingHorizontal: 15, paddingVertical: 10}]}>
+            <Pressable onPress={() => { setQtdCartas(item.valor) }} style={[estilosBordas, {backgroundColor: corBackground}, {paddingHorizontal: 12, paddingVertical: 10, alignItems: "center", justifyContent: "center"}]}>
                 <Text style={{color: "#FDFDFD", fontSize: 15}}>{textoEscrito}</Text>
             </Pressable>
         )
     }
-
 
     return (
         <SafeAreaView style={{backgroundColor: "#5F79F0", flex: 1, width: '100%', height: '100%', alignItems: 'center', justifyContent: 'center'}}>
@@ -66,28 +65,57 @@ export default function DeckPage(props) {
 
             <PerfilContainer User={user} Navigation={props.navigation} />
 
-            <View style={{width: '85%', flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'space-around'}}>
+            <View style={{width: '85%', flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'space-between', marginVertical: "5%"}}>
 
-                <View style={{width: "100%", height: "60%", flexDirection: "column", alignItems: "start", justifyContent: "space-between"}}>
+                <View style={{width: "100%", height: "65%", flexDirection: "column", alignItems: "start", justifyContent: "space-between"}}>
                     <Text style={{color: "#FDFDFD", fontSize: 24}}>{deckTmp.nome_deck}</Text>
                     <View style={{width: "100%", height: "90%"}}>
                         <View style={{width: "100%", height: "8%", borderStartStartRadius: 15, borderEndStartRadius: 15, backgroundColor:deckTmp.cor_deck}}></View>
-                        <View style={{width: "100%", height: "92%", borderStartEndRadius: 15, borderEndEndRadius: 15, backgroundColor: "#172430"}}>
+                        <View style={{width: "100%", height: "92%", borderStartEndRadius: 15, borderEndEndRadius: 15, backgroundColor: "#172430", gap: 20, paddingHorizontal: 20, paddingVertical: 15}}>
+                            
+                            <Text style={{fontSize: 20, color: "#FDFDFD"}}>{deckTmp.qtd_deck} cards</Text>
+                            <View>
+                                <Text style={{fontSize: 16, color: "#D9D9D9"}}>Meta para hoje:</Text>
+                                <Text style={{fontSize: 16, color: "#FDFDFD"}}>{deckTmp.meta_deck} cards</Text>                    
+                            </View>
+                            <View>
+                                <Text style={{fontSize: 16, color: "#D9D9D9"}}>Criado em:</Text>
+                                <Text style={{fontSize: 16, color: "#FDFDFD"}}>{deckTmp.criacao_deck}</Text>                    
+                            </View>
+                            <View>
+                                <Text style={{fontSize: 16, color: "#D9D9D9"}}>Estudado pela última vez em:</Text>
+                                <Text style={{fontSize: 16, color: "#FDFDFD"}}>{deckTmp.ultimo_estudo_deck}</Text>                    
+                            </View>
+                            <View>
+                                <Text style={{fontSize: 16, color: "#D9D9D9"}}>Quantidade de acertos:</Text>
+                                <Text style={{fontSize: 16, color: "#FDFDFD"}}>{deckTmp.qtd_acertos_deck} acertos</Text>                    
+                            </View>
+                            <View style={{width: "100%", flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 10, marginTop: "3%"}}>
+                                <Pressable style={{backgroundColor: "#14AE5C", padding: 10, width: "45%", borderRadius: 5, alignItems: "center", justifyContent: "center"}}>
+                                    <Text style={{fontsize: 12, color: "#FDFDFD"}}>Editar deck</Text>
+                                </Pressable>
+                                <Pressable style={{backgroundColor: "#4361EE", padding: 10, width: "45%", borderRadius: 5, alignItems: "center", justifyContent: "center"}}>
+                                    <Text style={{fontsize: 12, color: "#FDFDFD"}}>+ Adicionar card</Text>
+                                </Pressable>
+                            </View>
                         </View>
                     </View>
                 </View>
-
-                <View style={{width: "100%", flex: 1, flexDirection: "column", justifyContent: "center", alignItems: "center"}}>
-                    <FlatList 
-                        data={quantidades}
-                        renderItem={ButtonCarta}
-                        keyExtractor={(item) => item.posicao}
-                        horizontal={true}
-                        showsHorizontalScrollIndicator={false}
-                    />
-                    <ButtonPadrao textoBotao="Iniciar!" ModoEscuro Altura="25%"/>
+                <View style={{width: "100%", flexDirection: "column", justifyContent: "start", alignItems: "start", gap: 10, marginTop: "5%"}}>
+                    <Text style={{color: "#FDFDFD", fontSize: 24}}>Tamanho da rodada</Text>     
+                    <View style={{width: "100%", height: "65%", alignItems: "center", gap: 10}}>
+                        <View style={{width: "100%", height: "15%", alignItems: "center", justifyContent: "center"}}>
+                            <FlatList 
+                                data={quantidades}
+                                renderItem={ButtonCarta}
+                                keyExtractor={(item) => item.posicao}
+                                horizontal={true}
+                                showsHorizontalScrollIndicator={false}                        
+                                />
+                        </View>
+                        <ButtonPadrao textoBotao="Iniciar!" ModoEscuro Altura="25%"/>
+                    </View>        
                 </View>
-
             </View>
             </ImageBackground>
         </SafeAreaView>
