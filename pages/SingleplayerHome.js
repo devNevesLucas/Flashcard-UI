@@ -50,7 +50,7 @@ export default function SingleplayerHome(props) {
 
                     <FlatList 
                         data={decksTmp}
-                        renderItem={({ item }) => <Deck Deck={item}/>}
+                        renderItem={({ item }) => <Deck Deck={item} Navigation={props.navigation} />}
                         keyExtractor={(item) => item.codigo_deck}
                         
                     />

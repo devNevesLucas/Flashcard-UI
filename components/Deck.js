@@ -2,8 +2,12 @@ import { Text, TouchableOpacity, View } from "react-native";
 
 export default function Deck (props) {
 
+    const navegarDeck = () => {
+        props.Navigation.navigate('Deck')
+    }
+
     return (
-        <TouchableOpacity style={{width: "100%", height: 90, boderRadius: 20, marginBottom: 10, flexDirection: 'column', alignItems: "center", justifyContent: "center"}}>
+        <TouchableOpacity onPress={navegarDeck} style={{width: "100%", height: 90, boderRadius: 20, marginBottom: 10, flexDirection: 'column', alignItems: "center", justifyContent: "center"}}>
             <View style={{width: "100%", borderTopStartRadius: 10, borderEndStartRadius: 10, backgroundColor: props.Deck.cor_deck, height: "15%"}}></View>
             <View style={{width: "100%", borderBottomLeftRadius: 10, borderBottomRightRadius: 10, backgroundColor: "#FDFDFD", height: "85%", justifyContent: "space-around", paddingHorizontal: 15, paddingVertical: 5}}>
                 <Text style={{color: "#262626", fontSize: 16, marginBottom: "5%"}}>{props.Deck.nome_deck}</Text>
