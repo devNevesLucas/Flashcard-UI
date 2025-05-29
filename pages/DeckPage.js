@@ -54,6 +54,10 @@ export default function DeckPage(props) {
         )
     }
 
+    const iniciarTeste = () => {
+        props.navigation.navigate('Question');
+    }
+
     return (
         <SafeAreaView style={{backgroundColor: "#5F79F0", flex: 1, width: '100%', height: '100%', alignItems: 'center', justifyContent: 'center'}}>
             <ImageBackground
@@ -113,12 +117,11 @@ export default function DeckPage(props) {
                                 showsHorizontalScrollIndicator={false}                        
                                 />
                         </View>
-                        <ButtonPadrao textoBotao="Iniciar!" ModoEscuro Altura="25%"/>
+                        <ButtonPadrao handlePress={iniciarTeste} textoBotao="Iniciar!" ModoEscuro Altura="25%"/>
                     </View>        
                 </View>
             </View>
             </ImageBackground>
         </SafeAreaView>
     )
-
 }

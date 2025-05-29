@@ -1,4 +1,4 @@
-import { View, FlatList, Text } from "react-native";
+import { View, FlatList, Text, StyleSheet } from "react-native";
 
 export default function ContagemDias (props) {
 
@@ -26,15 +26,15 @@ export default function ContagemDias (props) {
         const cor = contadorDias >= item.id ? "#4361EE" : "#D9D9D9";
 
         return (
-            <View style={{display: 'flex', flexDirection: 'column', alignItems: 'center', marginLeft: 6, marginRight: 6}}>
-                <View style={{width: 30, aspectRatio: 1 / 1, backgroundColor: cor, borderRadius: 50}}></View>
-                <Text style={{color: cor, fontWeight: "bold", fontSize: 16}}>{item.dia}</Text>
+            <View style={estilo.baseDiaRenderizado}>
+                <View style={[estilo.circuloDiaRengerizado, {backgroundColor: cor}]}></View>
+                <Text style={[estilo.textoDiaRenderizado, {color: cor}]}>{item.dia}</Text>
             </View>
         )
     }
 
     return (
-        <View style={{display:'flex', flexDirection:'column', alignItems: 'center', justifyContent: 'center', width: "85%", height: '25%', backgroundColor: "#172430", padding: 20, borderRadius: 10}}>
+        <View style={estilo.baseFlatList}>
             <FlatList
                 data={dias}
                 renderItem={DiaRenderizado}
@@ -42,9 +42,48 @@ export default function ContagemDias (props) {
                 horizontal={true}
                 showsHorizontalScrollIndicator={false}
             />
-            <Text style={{color: "#4361EE", fontWeight: "bold", fontSize: 20}}>20 dias de estudo!</Text>
-            <Text style={{color: "#FDFDFD", fontWeight: "bold", fontSize: 20}}>Melhore!</Text>
+            <Text style={estilo.textoContagem}>20 dias de estudo!</Text>
+            <Text style={estilo.fraseContagem}>Melhore!</Text>
         </View>
     )
-
 }
+
+const estilo = StyleSheet.create({
+    baseDiaRenderizado: {
+        display: 'flex', 
+        flexDirection: 'column', 
+        alignItems: 'center',
+        marginLeft: 6, 
+        marginRight: 6
+    },
+    circuloDiaRengerizado: {
+        width: 30, 
+        aspectRatio: 1 / 1, 
+        borderRadius: 50
+    },
+    textoDiaRenderizado: {
+        fontWeight: "bold", 
+        fontSize: 16
+    },
+    baseFlatList: {
+        display:'flex', 
+        flexDirection:'column',
+        alignItems: 'center', 
+        justifyContent: 'center',
+        width: "85%",
+        height: '25%',
+        backgroundColor: "#172430",
+        padding: 20,
+        borderRadius: 10
+    },
+    textoContagem: {
+        color: "#4361EE", 
+        fontWeight: "bold", 
+        fontSize: 20
+    },
+    fraseContagem: {
+        color: "#FDFDFD", 
+        fontWeight: "bold", 
+        fontSize: 20
+    }
+})
