@@ -7,7 +7,7 @@ export default function ButtonPadrao(props) {
     const altura = props.Altura ? props.Altura : "10%";
 
     return (
-        <TouchableOpacity style={[estilo.base_botao, {height: altura}]} onPress={props.handlePress}>
+        <TouchableOpacity style={[estilo.base_botao, {height: altura}]} disabled = {props.Desativado} onPress={props.handlePress}>
             <View style={[estilo.view_botao, estiloBotao, ]}>       
                 <Text style={[estilo.botao, estiloTexto ]}>{props.textoBotao}</Text>
             </View>
