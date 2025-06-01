@@ -60,7 +60,7 @@ export default function LoginPage({navigation}) {
             await AsyncStorage.removeItem('token');
 
             await AsyncStorage.setItem('user', JSON.stringify(dados.usuario));
-            await AsyncStorage.setItem('token', JSON.stringify(dados.token));
+            await AsyncStorage.setItem('token', dados.token);
 
             setUser(dados.usuario);
         

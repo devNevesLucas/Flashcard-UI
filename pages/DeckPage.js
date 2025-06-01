@@ -3,12 +3,16 @@ import { ImageBackground, View, Text, Pressable, FlatList } from "react-native";
 import PerfilContainer from "../components/PerfilContainer";
 import { useUser } from "../context/user/useUser";
 import ButtonPadrao from "../components/ButtonPadrao";
-import { useState } from "react";
+import { useCallback, useState } from "react";
+import { useFocusEffect } from "@react-navigation/native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
 export default function DeckPage(props) {
     
     const { user, setUser } = useUser();
 
     const [qtdCartas, setQtdCartas] = useState(1);
+    const [deck, setDeck] = useState({});
 
     const deckTmp = {
         nome_deck: "Estrutura de dados",
@@ -20,11 +24,44 @@ export default function DeckPage(props) {
         qtd_acertos_deck: 14
     }
 
+    useFocusEffect(
+        useCallback(() => {
+
+            const carregarDeck = async () => {
+
+                try {
+
+                    const token = await AsyncStorage.getItem('token');
+
+                    const url = `${process.env.EXPO_PUBLIC_BACKEND}/deck/obterDeck/${props.route.params.CodigoDeck}`;
+
+                    const response = await fetch(url, {
+                        method: 'GET',
+                        headers: {
+                            'Content-type': 'application/json',
+                            'authorization': `Bearer ${token}`
+                        }
+                    })
+
+                    const deckObtido = await response.json();
+
+                    setDeck(deckObtido[0]);
+
+                } catch (error) {
+                    console.error(error);
+                }
+            };
+
+            carregarDeck();
+        }, [])
+    );
+
+
     let quantidades = [
         { posicao: 0, valor: 1 },
         { posicao: 1, valor: 10 }, 
-        { posicao: 2, valor: deckTmp.meta_deck }, 
-        { posicao: 3, valor: deckTmp.qtd_deck }
+        { posicao: 2, valor: deck.meta_deck }, 
+        { posicao: 3, valor: deck.qtd_deck }
     ]
 
     const ButtonCarta = ({item}) => {
@@ -41,6 +78,8 @@ export default function DeckPage(props) {
 
         if (item.valor == 1)
             textoEscrito = `${item.valor} carta`
+
+        if (item.valor == 0 && item.posicao != 3) return null;
 
         if (item.posicao == quantidades.length - 1) {
             textoEscrito = "todas!";
@@ -76,27 +115,27 @@ export default function DeckPage(props) {
             <View style={{width: '85%', flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'space-between', marginVertical: "5%"}}>
 
                 <View style={{width: "100%", height: "65%", flexDirection: "column", alignItems: "start", justifyContent: "space-between"}}>
-                    <Text style={{color: "#FDFDFD", fontSize: 24}}>{deckTmp.nome_deck}</Text>
-                    <View style={{width: "100%", height: "90%"}}>
-                        <View style={{width: "100%", height: "8%", borderStartStartRadius: 15, borderEndStartRadius: 15, backgroundColor:deckTmp.cor_deck}}></View>
+                    <Text style={{color: "#FDFDFD", fontSize: 24}}>{deck.nome_deck}</Text>
+                    <View style={{width: "100%", height: "90%", borderRadius: 15, overflow: 'hidden'}}>
+                        <View style={{width: "100%", height: "8%", backgroundColor:deck.cor_deck, borderTopLeftRadius: 15, borderTopRightRadius: 15}}></View>
                         <View style={{width: "100%", height: "92%", borderStartEndRadius: 15, borderEndEndRadius: 15, backgroundColor: "#172430", gap: 20, paddingHorizontal: 20, paddingVertical: 15}}>
                             
-                            <Text style={{fontSize: 20, color: "#FDFDFD"}}>{deckTmp.qtd_deck} cards</Text>
+                            <Text style={{fontSize: 20, color: "#FDFDFD"}}>{deck.qtd_deck} cards</Text>
                             <View>
                                 <Text style={{fontSize: 16, color: "#D9D9D9"}}>Meta para hoje:</Text>
-                                <Text style={{fontSize: 16, color: "#FDFDFD"}}>{deckTmp.meta_deck} cards</Text>                    
+                                <Text style={{fontSize: 16, color: "#FDFDFD"}}>{deck.meta_deck} cards</Text>                    
                             </View>
                             <View>
                                 <Text style={{fontSize: 16, color: "#D9D9D9"}}>Criado em:</Text>
-                                <Text style={{fontSize: 16, color: "#FDFDFD"}}>{deckTmp.criacao_deck}</Text>                    
+                                <Text style={{fontSize: 16, color: "#FDFDFD"}}>{deck.criacao_deck}</Text>                    
                             </View>
                             <View>
                                 <Text style={{fontSize: 16, color: "#D9D9D9"}}>Estudado pela última vez em:</Text>
-                                <Text style={{fontSize: 16, color: "#FDFDFD"}}>{deckTmp.ultimo_estudo_deck}</Text>                    
+                                <Text style={{fontSize: 16, color: "#FDFDFD"}}>{!deck.ultimo_estudo_deck ? 'Nunca estudado' : deck.ultimo_estudo_deck}</Text>                    
                             </View>
                             <View>
                                 <Text style={{fontSize: 16, color: "#D9D9D9"}}>Quantidade de acertos:</Text>
-                                <Text style={{fontSize: 16, color: "#FDFDFD"}}>{deckTmp.qtd_acertos_deck} acertos</Text>                    
+                                <Text style={{fontSize: 16, color: "#FDFDFD"}}>{deck.qtd_acertos_deck} acertos</Text>                    
                             </View>
                             <View style={{width: "100%", flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 10, marginTop: "3%"}}>
                                 <Pressable style={{backgroundColor: "#14AE5C", padding: 10, width: "45%", borderRadius: 5, alignItems: "center", justifyContent: "center"}}>
@@ -115,7 +154,9 @@ export default function DeckPage(props) {
                         <View style={{width: "100%", height: "15%", alignItems: "center", justifyContent: "center"}}>
                             <FlatList 
                                 data={quantidades}
-                                renderItem={ButtonCarta}
+                                renderItem={                                    
+                                    ButtonCarta
+                                }
                                 keyExtractor={(item) => item.posicao}
                                 horizontal={true}
                                 showsHorizontalScrollIndicator={false}                        

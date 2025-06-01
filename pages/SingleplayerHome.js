@@ -3,23 +3,51 @@ import { useUser } from "../context/user/useUser";
 import { Button, FlatList, ImageBackground, Text, TouchableOpacity, View } from "react-native";
 import PerfilContainer from "../components/PerfilContainer";
 import Deck from "../components/Deck";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useCallback, useEffect, useState } from "react";
+import { useFocusEffect } from "@react-navigation/native";
 
 export default function SingleplayerHome(props) {
 
     const { user, setUser } = useUser();
 
+    const [decks, setDecks] = useState([]);
+
     const navegarNewDeck = () => {
         props.navigation.navigate('NewDeck')
     }
 
-    const decksTmp = [
-        {codigo_deck: 1, nome_deck: 'Estrutura de dados', cor_deck: '#FF3B30', qtd_deck: 20, meta_deck: 12},
-        {codigo_deck: 2, nome_deck: 'Processos estocásticos', cor_deck: '#14AE5C', qtd_deck: 11, meta_deck: 3},
-        {codigo_deck: 3, nome_deck: 'Cálculo numérico', cor_deck: '#C00F0C', qtd_deck: 27, meta_deck: 8},
-        {codigo_deck: 4, nome_deck: 'Inteligência artificial', cor_deck: '#E5A000', qtd_deck: 40, meta_deck: 17},
-        {codigo_deck: 5, nome_deck: 'Direito digital', cor_deck: '#9747FF', qtd_deck: 15, meta_deck: 7},
-        {codigo_deck: 6, nome_deck: 'Direito digital', cor_deck: '#9747FF', qtd_deck: 15, meta_deck: 7},
-    ]
+    useFocusEffect(    
+        useCallback(() => {         
+            const carregarDecks = async () => {
+
+                try {
+
+                    const token = await AsyncStorage.getItem('token');
+                    
+                    const url = `${process.env.EXPO_PUBLIC_BACKEND}/deck/listarDecks`;
+
+                    const response = await fetch(url, {
+                        method: 'GET',
+                        headers: {
+                            'Content-type': 'application/json',
+                            'authorization': `Bearer ${token}`
+                        }   
+                    });
+
+                    const decksObtidos = await response.json();
+
+                    setDecks(decksObtidos);
+
+                } catch (error) {
+                    console.error(error);
+                }
+            };
+
+            carregarDecks();
+        }, [])
+    )
+
 
     const deckDesafioDiario = {
         codigo_deck: 999, nome_deck: 'Modo aleatório - Todos os seus Decks', cor_deck: '#5B2B99', qtd_deck: 50, meta_deck: 25 
@@ -49,7 +77,7 @@ export default function SingleplayerHome(props) {
                     </View>
 
                     <FlatList 
-                        data={decksTmp}
+                        data={decks}
                         renderItem={({ item }) => <Deck Deck={item} Navigation={props.navigation} />}
                         keyExtractor={(item) => item.codigo_deck}
                         

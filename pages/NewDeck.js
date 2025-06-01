@@ -6,6 +6,7 @@ import ButtonPadrao from '../components/ButtonPadrao'
 import InputField from '../components/InputField'
 import Slider from '@react-native-community/slider';
 import { useState } from 'react'
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function NewDeck(props) {
 
@@ -13,8 +14,41 @@ export default function NewDeck(props) {
     const [red, setRed] = useState(0);
     const [green, setGreen] = useState(0);
     const [blue, setBlue] = useState(0);
+    const [nomeDeck, setNomeDeck] = useState('');
 
-    const salvarDeck = () => {
+    const salvarDeck = async () => {
+
+        if (nomeDeck == '') return;
+
+        try {
+
+            const token = await AsyncStorage.getItem('token');            
+
+            const url = `${process.env.EXPO_PUBLIC_BACKEND}/deck/inserir`;
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: { 
+                    'Content-type': 'application/json', 
+                    'authorization': `Bearer ${token}` 
+                },
+                body: JSON.stringify({
+                    nome_deck: nomeDeck,
+                    cor_deck: calcularCor()
+                })
+            });
+
+            const dados = await response.json();
+
+            if (dados) {
+                props.navigation.goBack();
+            }
+
+        } catch (error) {
+
+            console.error(error);
+
+        }
+
     }
 
     const calcularCor = () => {
@@ -43,7 +77,7 @@ export default function NewDeck(props) {
                         <View style={{ width: "100%", height: "20%", backgroundColor: calcularCor(), borderStartStartRadius: 15, borderEndStartRadius: 15 }}></View>
                         <View style={{ width: "100%", height: "80%", borderStartEndRadius: 15, borderEndEndRadius: 15, backgroundColor: "#FDFDFD", alignItems: "center", justifyContent: "space-around" }}>
                             <View style={{ width: "80%" }}>
-                                <InputField Texto="Nome do deck" />
+                                <InputField Texto="Nome do deck" SetItem={setNomeDeck} />
                             </View>
 
                             <View style={{ width: "80%" }}>

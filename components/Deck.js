@@ -3,7 +3,7 @@ import { Text, TouchableOpacity, View } from "react-native";
 export default function Deck (props) {
 
     const navegarDeck = () => {
-        props.Navigation.navigate('Deck')
+        props.Navigation.navigate('Deck', {CodigoDeck: props.Deck.codigo_deck})
     }
 
     return (
