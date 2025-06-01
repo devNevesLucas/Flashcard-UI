@@ -17,7 +17,7 @@ export default function LoginPage({navigation}) {
 
         try {
             const usuarioStr = await AsyncStorage.getItem('user');
-
+            
             if (usuarioStr) {
                 const userJson = JSON.parse(usuarioStr);
                 setUser(userJson);                
@@ -57,10 +57,12 @@ export default function LoginPage({navigation}) {
             const dados = await response.json();
 
             await AsyncStorage.removeItem('user');
+            await AsyncStorage.removeItem('token');
 
-            await AsyncStorage.setItem('user', JSON.stringify(dados[0]));
+            await AsyncStorage.setItem('user', JSON.stringify(dados.usuario));
+            await AsyncStorage.setItem('token', JSON.stringify(dados.token));
 
-            setUser(dados[0]);
+            setUser(dados.usuario);
         
         } catch (error) {
             console.log("Erro ao obter usuário: ", error);

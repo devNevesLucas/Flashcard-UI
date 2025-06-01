@@ -2,6 +2,8 @@ import { SafeAreaView,ImageBackground, View, StyleSheet, Text, Pressable } from 
 import InputField from "../components/InputField";
 import ButtonPadrao from "../components/ButtonPadrao";
 import { useState } from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useUser } from "../context/user/useUser";
 
 export default function SignInPage({navigation}) {
 
@@ -13,6 +15,41 @@ export default function SignInPage({navigation}) {
     const [email, setEmail] = useState('');
     const [senha, setSenha] = useState('');
     const [confirmacaoSenha, setConfirmacaoSenha] = useState('');
+
+    const { user, setUser } = useUser();
+
+    const criarUsuario = async () => {
+
+        if (nome == "" || email == "" || senha != confirmacaoSenha || senha == "") return;
+
+        try {
+            
+            const url = `${process.env.EXPO_PUBLIC_BACKEND}/user/inserir`;
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: { 'Content-type': 'application/json' },
+                body: JSON.stringify({
+                    nome: nome,
+                    email: email,
+                    senha: senha
+                })
+            });
+
+            const dados = await response.json();
+            
+            console.log(dados.usuario);
+            await AsyncStorage.removeItem('user');
+            await AsyncStorage.removeItem('token');
+
+            await AsyncStorage.setItem('user', JSON.stringify(dados.usuario));
+            await AsyncStorage.setItem('token', JSON.stringify(dados.token));
+
+            setUser(dados.usuario);
+
+        } catch (error) {
+            console.error(error);
+        }
+    }
 
     return (
         <SafeAreaView style={{backgroundColor: "#4361EE", flex: 1, width: '100%', height: '100%', alignItems: 'center', justifyContent: 'center'}}>
@@ -41,7 +78,7 @@ export default function SignInPage({navigation}) {
                 </View>
                 <ButtonPadrao 
                     textoBotao="Criar conta"    
-                    
+                    handlePress={criarUsuario}
                 />
             </ImageBackground>            
         </SafeAreaView>
