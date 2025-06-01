@@ -58,6 +58,10 @@ export default function DeckPage(props) {
         props.navigation.navigate('Question');
     }
 
+    const handleVerCards = () => {
+        props.navigation.navigate('Cards');
+    }
+
     return (
         <SafeAreaView style={{backgroundColor: "#5F79F0", flex: 1, width: '100%', height: '100%', alignItems: 'center', justifyContent: 'center'}}>
             <ImageBackground
@@ -98,8 +102,8 @@ export default function DeckPage(props) {
                                 <Pressable style={{backgroundColor: "#14AE5C", padding: 10, width: "45%", borderRadius: 5, alignItems: "center", justifyContent: "center"}}>
                                     <Text style={{fontsize: 12, color: "#FDFDFD"}}>Editar deck</Text>
                                 </Pressable>
-                                <Pressable style={{backgroundColor: "#4361EE", padding: 10, width: "45%", borderRadius: 5, alignItems: "center", justifyContent: "center"}}>
-                                    <Text style={{fontsize: 12, color: "#FDFDFD"}}>+ Adicionar card</Text>
+                                <Pressable onPress={handleVerCards} style={{backgroundColor: "#4361EE", padding: 10, width: "45%", borderRadius: 5, alignItems: "center", justifyContent: "center"}}>
+                                    <Text style={{fontsize: 12, color: "#FDFDFD"}}>Ver cards</Text>
                                 </Pressable>
                             </View>
                         </View>
