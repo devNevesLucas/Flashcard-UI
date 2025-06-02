@@ -1,77 +1,29 @@
-import { FlatList, ImageBackground, Text, View } from "react-native";
+import { FlatList, ImageBackground, Text, View, Pressable, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import PerfilContainer from "../components/PerfilContainer";
 import { useUser } from "../context/user/useUser";
 import ButtonPadrao from "../components/ButtonPadrao";
 import PerguntaItem from "../components/PerguntaItem";
 import { useState } from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function CardsPage(props) {
 
     const { user, setUser } = useUser();
-    const [perguntas, setPerguntas] = useState([
-        {
-            enunciado_pergunta: "Qual das estruturas de dados a seguir é baseada no princípio LIFO (Last In, First Out)?",
-            codigo_pergunta: 0,
-            alternativas: [
-                { codigo_alternativa: 0, enunciado_alternativa: "Fila", correta: false },
-                { codigo_alternativa: 1, enunciado_alternativa: "Árvore", correta: false },
-                { codigo_alternativa: 2, enunciado_alternativa: "Lista Encadeada", correta: false },
-                { codigo_alternativa: 3, enunciado_alternativa: "Pilha", correta: true },
-                { codigo_alternativa: 4, enunciado_alternativa: "Hash Table", correta: false }
-            ]
-        },
-        {
-            enunciado_pergunta: "Qual estrutura de dados é mais adequada para implementar uma fila de impressão?",
-            codigo_pergunta: 1,
-            alternativas: [
-                { codigo_alternativa: 0, enunciado_alternativa: "Árvore Binária", correta: false },
-                { codigo_alternativa: 1, enunciado_alternativa: "Pilha", correta: false },
-                { codigo_alternativa: 2, enunciado_alternativa: "Hash Table", correta: false },
-                { codigo_alternativa: 3, enunciado_alternativa: "Lista Duplamente Encadeada", correta: false },
-                { codigo_alternativa: 4, enunciado_alternativa: "Fila", correta: true }
-            ]
-        },
-        {
-            enunciado_pergunta: "O que é uma árvore binária de busca (BST)?",
-            codigo_pergunta: 2,
-            alternativas: [
-                { codigo_alternativa: 0, enunciado_alternativa: "Uma árvore onde cada nó tem no máximo dois filhos e os valores são armazenados em ordem aleatória", correta: false },
-                { codigo_alternativa: 1, enunciado_alternativa: "Uma árvore onde cada nó tem exatamente dois filhos", correta: false },
-                { codigo_alternativa: 2, enunciado_alternativa: "Uma árvore onde para cada nó, o valor à esquerda é menor e o valor à direita é maior", correta: true },
-                { codigo_alternativa: 3, enunciado_alternativa: "Uma árvore em que todos os nós têm o mesmo número de filhos", correta: false },
-                { codigo_alternativa: 4, enunciado_alternativa: "Uma árvore onde os valores são duplicados em cada nível", correta: false }
-            ]
-        },
-        {
-            enunciado_pergunta: "Qual estrutura de dados é ideal para buscar dados em tempo constante, em média?",
-            codigo_pergunta: 3,
-            alternativas: [
-                { codigo_alternativa: 0, enunciado_alternativa: "Árvore AVL", correta: false },
-                { codigo_alternativa: 1, enunciado_alternativa: "Hash Table", correta: true },
-                { codigo_alternativa: 2, enunciado_alternativa: "Pilha", correta: false },
-                { codigo_alternativa: 3, enunciado_alternativa: "Fila", correta: false },
-                { codigo_alternativa: 4, enunciado_alternativa: "Lista Encadeada", correta: false }
-            ]
-        },
-        {
-            enunciado_pergunta: "O que caracteriza uma lista duplamente encadeada?",
-            codigo_pergunta: 4,
-            alternativas: [
-                { codigo_alternativa: 0, enunciado_alternativa: "Cada nó aponta apenas para o próximo", correta: false },
-                { codigo_alternativa: 1, enunciado_alternativa: "Cada nó tem um valor único e fixo", correta: false },
-                { codigo_alternativa: 2, enunciado_alternativa: "Cada nó aponta para o início e o fim da lista", correta: false },
-                { codigo_alternativa: 3, enunciado_alternativa: "Cada nó aponta para o anterior e o próximo", correta: true },
-                { codigo_alternativa: 4, enunciado_alternativa: "Cada nó possui um índice inteiro como chave", correta: false }
-            ],
-        }
-    ]);
+
+    const [qtdPerguntasAdicionadas, setQtdPerguntasAdicionadas] = useState(0);
+    const [qtdAlternativasAdicionadas, setQtdAlternativasAdicionadas] = useState(0);
+
+    const [perguntasRemovidas, setPerguntasRemovidas] = useState([]);
+    const [alternativasRemovidas, setAlternativasRemovidas] = useState([]);
+    
+    const [perguntas, setPerguntas] = useState([]);
 
     const atualizarEnunciadoPergunta = (codigoPergunta, conteudo) => {
         setPerguntas(perguntas =>
             perguntas.map(pergunta =>
                 pergunta.codigo_pergunta == codigoPergunta ? {
-                    ...pergunta, enunciado_pergunta: conteudo
+                    ...pergunta, enunciado_pergunta: conteudo, editado: true
                 } : pergunta
             )
         )
@@ -83,7 +35,7 @@ export default function CardsPage(props) {
                 pergunta.codigo_pergunta == codigoPergunta ? {
                     ...pergunta, alternativas: pergunta.alternativas.map(alternativa =>
                         alternativa.codigo_alternativa == codigoAlternativa ? {
-                            ...alternativa, enunciado_alternativa: conteudo
+                            ...alternativa, enunciado_alternativa: conteudo, editado: true
                         } : alternativa
                     )
                 } : pergunta
@@ -97,9 +49,9 @@ export default function CardsPage(props) {
                 pergunta.codigo_pergunta == codigoPergunta ? {
                     ...pergunta, alternativas: pergunta.alternativas.map(alternativa => 
                         alternativa.codigo_alternativa == codigoAlternativa ? {
-                            ...alternativa, correta: true
+                            ...alternativa, correta: true, editado: true
                         } : {
-                            ...alternativa, correta: false
+                            ...alternativa, correta: false, editado: true
                         }
                     )
                 } : pergunta
@@ -111,6 +63,9 @@ export default function CardsPage(props) {
         setPerguntas(perguntas =>
             perguntas.filter(pergunta => pergunta.codigo_pergunta != codigoPergunta)
         )
+
+        if (typeof codigoPergunta == "number")
+            setPerguntasRemovidas([...perguntasRemovidas, codigoPergunta]);
     }
 
     const removerAlternativa = (codigoPergunta, codigoAlternativa) => {
@@ -120,12 +75,86 @@ export default function CardsPage(props) {
                     ...pergunta,
                     alternativas: pergunta.alternativas.filter(alternativa => 
                         alternativa.codigo_alternativa != codigoAlternativa
-                    )
+                    ), 
+                    editado: true
                 } : pergunta
             )
         )
+
+        if (typeof codigoAlternativa == "number")
+            setAlternativasRemovidas([...alternativasRemovidas, codigoAlternativa]);
     }
 
+    const inserirPergunta = () => {
+        setPerguntas([...perguntas, { 
+                enunciado_pergunta: "", 
+                codigo_pergunta: `pergunta_nao_salva${qtdPerguntasAdicionadas}`, 
+                alternativas: [], 
+                recem_criado: true
+            }])
+        setQtdPerguntasAdicionadas(qtdPerguntasAdicionadas + 1);
+    }
+
+    const inserirAlternativa = (codigoPergunta) => {
+
+        setPerguntas(perguntas => 
+            perguntas.map(pergunta => 
+                pergunta.codigo_pergunta == codigoPergunta ? {
+                    ...pergunta,
+                    alternativas: [
+                            ...pergunta.alternativas,
+                            {
+                                codigo_alternativa: `alternativa_nao_salva${qtdAlternativasAdicionadas}`, 
+                                enunciado_alternativa: "", 
+                                correta: false,
+                                recem_criado: true
+                            }
+                        ]
+                } : pergunta
+            )
+        );            
+
+        setQtdAlternativasAdicionadas(qtdAlternativasAdicionadas + 1);
+    }
+
+    const salvarEstado = async () => {
+
+        let perguntasAlteradas = perguntas.filter(pergunta => (pergunta.editado || pergunta.recem_criado) && pergunta.enunciado_pergunta.trim() != "");
+        let perguntasFiltradas = perguntasAlteradas.map(pergunta => (
+            { 
+                ...pergunta, 
+                alternativas: pergunta.alternativas.filter(alternativa => 
+                        alternativa.editado && alternativa.enunciado_alternativa != ""
+                    ) 
+            }
+        ))
+
+        let perguntasCriadas = perguntasAlteradas.filter(pergunta => pergunta.recem_criado);        
+
+        let objetoEnviado = {
+            perguntas_alteradas: perguntasFiltradas
+        }
+
+        console.log(objetoEnviado)
+
+        if (perguntasFiltradas.length == 0) return;
+
+        const token = await AsyncStorage.getItem('token');        
+
+        const url = `${process.env.EXPO_PUBLIC_BACKEND}/pergunta/atualizar`;
+
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-type': 'application/json',
+                'authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify(objetoEnviado)
+        });
+
+        const resultado = await response.json();
+    }
+    
     return (
         <SafeAreaView style={{backgroundColor: "#5F79F0", flex: 1, width: '100%', height: '100%', alignItems: 'center', justifyContent: 'center'}}>
             <ImageBackground
@@ -150,18 +179,26 @@ export default function CardsPage(props) {
                                         SetAlternativaCorreta={atualizarAlternativaCorreta}
                                         RemoverPergunta={removerPergunta}
                                         RemoverAlternativa={removerAlternativa}
+                                        AdicionarAlternativa={inserirAlternativa}
                                     />
                                     }
                                 keyExtractor={(item) => item.codigo_pergunta}
                                 style={{width: "90%"}}
                                 contentContainerStyle={{justifyContent: "center"}}
-                            />
+
+                                ListFooterComponent={() => (
+                                    <View style={{width: "100%", justifyContent: "center", alignItems: "center"}}>
+                                        <TouchableOpacity onPress={inserirPergunta} style={{backgroundColor: "#4361EE", padding: 10, width: "60%", borderRadius: 5, alignItems: "center", justifyContent: "center", marginTop: 10}}>
+                                            <Text style={{fontsize: 12, color: "#FDFDFD"}}>+ Adicionar pergunta</Text>
+                                        </TouchableOpacity>
+                                    </View>
+                                )}
+                            />                            
                         </View>
                     </View>
-
                     <ButtonPadrao 
                         textoBotao="Salvar"
-
+                        handlePress={salvarEstado}
                     />
                 </View>
             </ImageBackground>

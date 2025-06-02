@@ -32,12 +32,16 @@ export default function PerguntaItem(props) {
         props.RemoverAlternativa(props.Pergunta.codigo_pergunta, codigoAlternativa)
     }
 
+    const adicionarAlternativa = () => {
+        props.AdicionarAlternativa(props.Pergunta.codigo_pergunta);
+    }
+
     return (
         <View style={{width: "100%", backgroundColor: "#042959", marginVertical: 10, borderRadius: 5}}>            
             <Pressable onPress={ () => { setExpandido(!expandido) }} style={{alignItems: "center", justifyContent: "space-around", flexDirection: "row", width: "90%", gap: 10, padding: 15}}>
                 <FontAwesome name={icon} size={36} color="#FDFDFD" />
                 <TextInput 
-                    style={{fontSize: 16, color: "#FDFDFD"}}
+                    style={{fontSize: 16, color: "#FDFDFD", flex: 1}}
                     value={props.Pergunta.enunciado_pergunta}
                     onChangeText={texto => atualizarEnunciado(texto)}
                     multiline={true}
@@ -60,6 +64,13 @@ export default function PerguntaItem(props) {
                     keyExtractor={(item) => item.codigo_alternativa}
                     contentContainerStyle={{justifyContent: "center", alignItems: "center"}}
                     style={{width: "100%", marginVertical: 15}}
+                    ListFooterComponent={() => (
+                        <View style={{width: "100%", justifyContent: "center", alignItems: "center"}}>
+                            <TouchableOpacity onPress={adicionarAlternativa} style={{backgroundColor: "#4361EE", padding: 10, width: "60%", borderRadius: 5, alignItems: "center", justifyContent: "center", marginTop: 10}}>
+                                <Text style={{fontsize: 12, color: "#FDFDFD"}}>+ Adicionar alternativa</Text>
+                            </TouchableOpacity>
+                        </View>
+                    )}
                 />
             </View> }
             { !expandido && <View style={{width: "100%", alignItems: "center", justifyContent: "center", flexDirection: "row"}}>
