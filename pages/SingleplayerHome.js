@@ -35,6 +35,13 @@ export default function SingleplayerHome(props) {
                         }   
                     });
 
+                    if (!response.ok) {
+                        if (response.status == 401) {
+                            console.error("Token inválido, deslogando");
+                            setUser(null);
+                        }
+                    }
+
                     const decksObtidos = await response.json();
 
                     setDecks(decksObtidos);
@@ -84,7 +91,7 @@ export default function SingleplayerHome(props) {
                     />
                 </View>
 
-                <View style={{flexDirection: "column", width: "100%", height: "20%"}}>
+                <View style={{flexDirection: "column", width: "100%", height: "20%", opacity: 0.5}} pointerEvents="none">
                     <Text style={{ fontSize: 24, color: "#FDFDFD", marginBottom: 10 }}>Desafio diário</Text>
                     <Deck Deck={deckDesafioDiario} />
                 </View>

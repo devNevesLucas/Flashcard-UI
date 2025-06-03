@@ -14,16 +14,6 @@ export default function DeckPage(props) {
     const [qtdCartas, setQtdCartas] = useState(1);
     const [deck, setDeck] = useState({});
 
-    const deckTmp = {
-        nome_deck: "Estrutura de dados",
-        cor_deck: "#FF3B30",
-        qtd_deck: 20,
-        meta_deck: 12,
-        criacao_deck: '15/04/2025',
-        ultimo_estudo_deck: '19/04/2025',
-        qtd_acertos_deck: 14
-    }
-
     useFocusEffect(
         useCallback(() => {
 
@@ -93,8 +83,59 @@ export default function DeckPage(props) {
         )
     }
 
-    const iniciarTeste = () => {
-        props.navigation.navigate('Question');
+    const removerDeck = async () => {
+
+        try {
+            const url = `${process.env.EXPO_PUBLIC_BACKEND}/deck/removerDeck/${deck.codigo_deck}`;
+
+            const token = await AsyncStorage.getItem('token');
+
+            const response = await fetch(url, {
+                method: 'DELETE',
+                headers: {
+                    'Content-type': 'application/json',
+                    'authorization': `Bearer ${token}`
+                }
+            })
+
+            props.navigation.goBack();
+
+        } catch (error) {
+            console.error(error);
+            return;
+        }
+    }
+
+    const iniciarTeste = async () => {
+
+        let cardsObtidos = [];
+
+        try {
+
+            const url = `${process.env.EXPO_PUBLIC_BACKEND}/pergunta/listar/${deck.codigo_deck}/quantidade/${qtdCartas}`;
+
+            const token = await AsyncStorage.getItem('token');
+
+            const response = await fetch(url, {
+                method: 'GET',
+                headers: {
+                    'Content-type': 'application/json',
+                    'authorization': `Bearer ${token}`
+                }
+            })
+
+            cardsObtidos = await response.json();
+
+        } catch (error) {
+
+            console.error(error);
+            return;
+
+        }
+
+        if (cardsObtidos.length == 0) return;
+
+        props.navigation.navigate('Question', {Deck: deck, Perguntas: cardsObtidos});
     }
 
     const handleVerCards = () => {
@@ -138,8 +179,8 @@ export default function DeckPage(props) {
                                 <Text style={{fontSize: 16, color: "#FDFDFD"}}>{deck.qtd_acertos_deck} acertos</Text>                    
                             </View>
                             <View style={{width: "100%", flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 10, marginTop: "3%"}}>
-                                <Pressable style={{backgroundColor: "#14AE5C", padding: 10, width: "45%", borderRadius: 5, alignItems: "center", justifyContent: "center"}}>
-                                    <Text style={{fontsize: 12, color: "#FDFDFD"}}>Editar deck</Text>
+                                <Pressable onPress={removerDeck} style={{backgroundColor: "#E63D3D", padding: 10, width: "45%", borderRadius: 5, alignItems: "center", justifyContent: "center"}}>
+                                    <Text style={{fontsize: 12, color: "#FDFDFD"}}>Apagar deck</Text>
                                 </Pressable>
                                 <Pressable onPress={handleVerCards} style={{backgroundColor: "#4361EE", padding: 10, width: "45%", borderRadius: 5, alignItems: "center", justifyContent: "center"}}>
                                     <Text style={{fontsize: 12, color: "#FDFDFD"}}>Ver cards</Text>

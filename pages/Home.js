@@ -43,11 +43,12 @@ export default function HomePage({navigation}) {
                             textoBotao="Estudar em grupo"
                             ModoEscuro={true}
                             Altura="45%"
+                            Desativado
                         />
                     </View>
 
-                    <Pressable onPress={logout} >
-                        <Text style={{color: '#000000'}}>Sair</Text>
+                    <Pressable onPress={logout} style={{backgroundColor: "#5F79F0", borderRadius: 5, paddingVertical: 5, paddingHorizontal: 15}}>
+                        <Text style={{color: '#FDFDFD', fontSize: 15}}>Sair</Text>
                     </Pressable>
                 </View>
             </ImageBackground>
