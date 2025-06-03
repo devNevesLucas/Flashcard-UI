@@ -98,7 +98,7 @@ export default function DeckPage(props) {
     }
 
     const handleVerCards = () => {
-        props.navigation.navigate('Cards');
+        props.navigation.navigate('Cards', {CodigoDeck: props.route.params.CodigoDeck});
     }
 
     return (

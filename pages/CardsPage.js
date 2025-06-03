@@ -4,8 +4,9 @@ import PerfilContainer from "../components/PerfilContainer";
 import { useUser } from "../context/user/useUser";
 import ButtonPadrao from "../components/ButtonPadrao";
 import PerguntaItem from "../components/PerguntaItem";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useFocusEffect } from "@react-navigation/native";
 
 export default function CardsPage(props) {
 
@@ -18,6 +19,41 @@ export default function CardsPage(props) {
     const [alternativasRemovidas, setAlternativasRemovidas] = useState([]);
     
     const [perguntas, setPerguntas] = useState([]);
+
+    useFocusEffect(
+        useCallback(() => {
+
+            const carregarCards = async () => {
+
+                try {
+
+                    const token = await AsyncStorage.getItem('token');
+                    const url = `${process.env.EXPO_PUBLIC_BACKEND}/pergunta/listarTodas/${props.route.params.CodigoDeck}`;
+                    
+                    const response = await fetch(url, {
+                    method: "GET",
+                    headers: {
+                        'Content-type': 'application/json',
+                        'authorization': `Bearer ${token}`
+                    }
+                    })
+
+                    const cardsObtidos = await response.json();
+                    
+                    setPerguntas(cardsObtidos);
+            
+                } catch (error) {
+
+                    console.error("Erro ao listar cards: ", error);
+
+                }
+            };
+
+            carregarCards();
+
+        }, [])
+    );
+
 
     const atualizarEnunciadoPergunta = (codigoPergunta, conteudo) => {
         setPerguntas(perguntas =>
@@ -33,7 +69,8 @@ export default function CardsPage(props) {
         setPerguntas(perguntas => 
             perguntas.map(pergunta => 
                 pergunta.codigo_pergunta == codigoPergunta ? {
-                    ...pergunta, alternativas: pergunta.alternativas.map(alternativa =>
+                    ...pergunta, editado: true,
+                        alternativas: pergunta.alternativas.map(alternativa =>
                         alternativa.codigo_alternativa == codigoAlternativa ? {
                             ...alternativa, enunciado_alternativa: conteudo, editado: true
                         } : alternativa
@@ -47,7 +84,8 @@ export default function CardsPage(props) {
         setPerguntas(perguntas => 
             perguntas.map(pergunta => 
                 pergunta.codigo_pergunta == codigoPergunta ? {
-                    ...pergunta, alternativas: pergunta.alternativas.map(alternativa => 
+                    ...pergunta, editado: true, 
+                        alternativas: pergunta.alternativas.map(alternativa => 
                         alternativa.codigo_alternativa == codigoAlternativa ? {
                             ...alternativa, correta: true, editado: true
                         } : {
@@ -75,8 +113,7 @@ export default function CardsPage(props) {
                     ...pergunta,
                     alternativas: pergunta.alternativas.filter(alternativa => 
                         alternativa.codigo_alternativa != codigoAlternativa
-                    ), 
-                    editado: true
+                    )                    
                 } : pergunta
             )
         )
@@ -90,7 +127,8 @@ export default function CardsPage(props) {
                 enunciado_pergunta: "", 
                 codigo_pergunta: `pergunta_nao_salva${qtdPerguntasAdicionadas}`, 
                 alternativas: [], 
-                recem_criado: true
+                recem_criado: true,
+                codigo_deck: props.route.params.CodigoDeck
             }])
         setQtdPerguntasAdicionadas(qtdPerguntasAdicionadas + 1);
     }
@@ -117,42 +155,87 @@ export default function CardsPage(props) {
         setQtdAlternativasAdicionadas(qtdAlternativasAdicionadas + 1);
     }
 
+    const fetchPergunta = async (endpoint, metodo = "POST", header, body) => {
+
+        const url = `${process.env.EXPO_PUBLIC_BACKEND}/pergunta/${endpoint}`;
+
+        try {
+
+            const response = await fetch(url, {
+                method: metodo,
+                headers: header,
+                body: JSON.stringify(body)
+            })            
+
+            return await response.json();
+
+        } catch (error) {
+
+            console.error(error);
+
+        }
+            
+        return false;
+    }
+
     const salvarEstado = async () => {
 
-        let perguntasAlteradas = perguntas.filter(pergunta => (pergunta.editado || pergunta.recem_criado) && pergunta.enunciado_pergunta.trim() != "");
+        let perguntasAlteradas = perguntas.filter(pergunta => (pergunta.editado && !pergunta.recem_criado) && pergunta.enunciado_pergunta.trim() != "");  
         let perguntasFiltradas = perguntasAlteradas.map(pergunta => (
             { 
                 ...pergunta, 
                 alternativas: pergunta.alternativas.filter(alternativa => 
-                        alternativa.editado && alternativa.enunciado_alternativa != ""
-                    ) 
+                    (alternativa.editado && !alternativa.recem_criado) && alternativa.enunciado_alternativa != ""
+                ) 
             }
         ))
-
-        let perguntasCriadas = perguntasAlteradas.filter(pergunta => pergunta.recem_criado);        
-
-        let objetoEnviado = {
-            perguntas_alteradas: perguntasFiltradas
-        }
-
-        console.log(objetoEnviado)
-
-        if (perguntasFiltradas.length == 0) return;
+        
+        let codigosAlternativasRemovidas = alternativasRemovidas.map(alternativa => alternativa.codigo_alternativa);
+        let perguntasCriadas = perguntas.filter(pergunta => pergunta.recem_criado);
 
         const token = await AsyncStorage.getItem('token');        
 
-        const url = `${process.env.EXPO_PUBLIC_BACKEND}/pergunta/atualizar`;
+        const headerComum = {
+            'Content-type': 'application/json',
+            'authorization': `Bearer ${token}`
+        }
 
-        const response = await fetch(url, {
-            method: 'POST',
-            headers: {
-                'Content-type': 'application/json',
-                'authorization': `Bearer ${token}`
+        let requisicoes = [
+            {
+                body: perguntasFiltradas,
+                endpoint: "atualizar",
+                method: "PUT",
             },
-            body: JSON.stringify(objetoEnviado)
-        });
+            {
+                body: perguntasRemovidas,
+                endpoint: "remover",
+                method: "DELETE"
+            },
+            {
+                body: perguntasCriadas,
+                endpoint: "inserir",
+                method: "POST"
+            }
+        ]
 
-        const resultado = await response.json();
+        requisicoes = requisicoes.filter(requisicao => requisicao.body.length > 0)
+
+        if (requisicoes.length == 0) {
+            props.navigation.goBack();
+        };
+
+        await Promise.all(
+            requisicoes.map(requisicao =>
+                fetchPergunta(
+                    requisicao.endpoint, 
+                    requisicao.method, 
+                    headerComum, 
+                    requisicao.body
+                )
+            )
+        )
+
+        props.navigation.goBack();
     }
     
     return (
