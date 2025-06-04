@@ -41,7 +41,7 @@ export default function PerguntaItem(props) {
             <Pressable onPress={ () => { setExpandido(!expandido) }} style={{alignItems: "center", justifyContent: "space-around", flexDirection: "row", width: "90%", gap: 10, padding: 15}}>
                 <FontAwesome name={icon} size={36} color="#FDFDFD" />
                 <TextInput 
-                    style={{fontSize: 16, color: "#FDFDFD", flex: 1}}
+                    style={[{fontSize: 16, color: "#FDFDFD", flex: 1}, modoEdicao ? {borderLeftWidth: 2, borderLeftColor: "#FDFDFD"} : {}]}
                     value={props.Pergunta.enunciado_pergunta}
                     onChangeText={texto => atualizarEnunciado(texto)}
                     multiline={true}

@@ -15,10 +15,19 @@ A ideia do aplicativo gira em torno de ser uma forma de estudo dinâmica para se
 - Criação e exclusão de decks
 - Criação, edição e remoção de cards (perguntas e alternativas)
 - Estudo utilizando cards criados
+- Autenticação de usuário por JWT
+
+## Ferramentas utilizadas
+
+- React Native
+- ExpressJS
+- JWT: Json Web Token
+- Bcrypt
+- MySql 
 
 ## Rodando o Projeto
 
-O projeto foi montado com a ideia de se conectar a uma API externa, para isso é necessário ter um arquivo ```.env ``` na raiz do projeto com a url da api. A variável utilizada e consultada ao longo do projeto é chamada ```EXPO_PUBLIC_BACKEND```.
+O projeto foi montado com a ideia de se conectar a uma API externa, para isso é necessário ter um arquivo ```.env``` na raiz do projeto com a url da api. A variável utilizada e consultada ao longo do projeto é chamada ```EXPO_PUBLIC_BACKEND```.
 
 ### Passos para iniciar aplicativo
 ```

@@ -25,7 +25,7 @@ export default function AlternativaItem(props) {
     return (
         <View style={{width: "100%", backgroundColor: "#02224C", marginVertical: 5, paddingVertical: 10, paddingHorizontal: 10, gap: 10, borderRadius: 10}}>
             <TextInput 
-                style={{color: "#FDFDFD", fontSize: 16, paddingLeft: 10, borderLeftColor: "#FDFDFD", borderLeftWidth: 2}}
+                style={[{color: "#FDFDFD", fontSize: 16, paddingLeft: 10}, modoEdicao ? {borderLeftColor: "#FDFDFD", borderLeftWidth: 2} : {}]}
                 value={props.Alternativa.enunciado_alternativa}
                 onChangeText={texto => atualizarEnunciado(texto)}
                 multiline={true}

@@ -20,7 +20,7 @@ export default function SignInPage({navigation}) {
 
     const criarUsuario = async () => {
 
-        if (nome == "" || email == "" || senha != confirmacaoSenha || senha == "") return;
+        if (nome == "" || email == "" || senha != confirmacaoSenha || senha < 8) return;
 
         try {
             
@@ -37,7 +37,6 @@ export default function SignInPage({navigation}) {
 
             const dados = await response.json();
             
-            console.log(dados.usuario);
             await AsyncStorage.removeItem('user');
             await AsyncStorage.removeItem('token');
 
